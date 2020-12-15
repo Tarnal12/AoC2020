@@ -23,28 +23,24 @@ def main():
         if bus_id.isnumeric():
             bus_offsets.append((int(bus_id), i))
         i += 1
-    bus_offsets.sort(reverse=True)
+    
+    reduced_offsets = []
+    for (bus_id, bus_offset) in bus_offsets:
+        reduced_offsets.append((bus_id, bus_offset % bus_id))
+    bus_offsets = reduced_offsets
+    bus_offsets.sort()
             
-    jackpot = False
     step_size = bus_offsets[0][0]
     possible_t = 0 - bus_offsets[0][1]
-    conditions_fulfilled = 1
+    bus_offsets.pop(0)
 
-    possible_t = 581588423192424
-    step_size = 323681
-    conditions_fulfilled = 2
-
-    while not jackpot:
+    while len(bus_offsets) > 0:
         possible_t += step_size
-        jackpot = True
-        for bus in bus_offsets[conditions_fulfilled:]:
-            tmp = possible_t % bus[0]
-            if (bus[0] - (possible_t % bus[0]) != bus[1]) and (tmp != 0 or bus[1] != 0):
-                jackpot = False
-                break
-            else:
-                step_size = step_size * bus[0]
-                conditions_fulfilled += 1
+
+        for (bus_id, bus_offset) in bus_offsets:
+            if (bus_id - (possible_t % bus_id) == bus_offset) or (possible_t % bus_id == 0 and bus_offset == 0):
+                step_size = step_size * bus_id
+                bus_offsets.remove((bus_id, bus_offset))
     print(possible_t)
 
 if __name__ == "__main__":
